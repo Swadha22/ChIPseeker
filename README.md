@@ -3,7 +3,7 @@
       ## installed ChIPseeker, verion 1.26.2
 
 
-## 1. Make sure to install all the packages from Bioconductor (see the very bottom of the code)
+### 1. Make sure to install all the packages from Bioconductor (see the very bottom of the code)
       rm(list=ls())
       library(ChIPseeker)
       library(TxDb.Celegans.UCSC.ce11.refGene)
@@ -20,10 +20,10 @@
   dir()
   
  
-## 2 read the output Excel files (csv) from MACS2
+### 2 read the output Excel files (csv) from MACS2
     ### note: make sure to modify the column names in Excel (csv) files
 
-##  R does not like space 
+###  R does not like space 
 
   S39.HTAS1.C <-read.csv("HTAS-1.C.S39.csv")
   S39.HTZ1 <-read.csv("HTZ-1.S39.csv")
@@ -36,7 +36,7 @@
   head( S39.HTAS1.C)
 
   
- ## analysis of each column. Let's check Peak Length
+ ### analysis of each column. Let's check Peak Length
  
   summary(S39.HTAS1.C)
   hist( S39.HTAS1.C$length, border="black", col="lightblue",
@@ -67,7 +67,7 @@
         xlim=c(0,3000), breaks=100)
   
   
-## analysis of each column. Let's check Lo10.qvalue
+### analysis of each column. Let's check Lo10.qvalue
   summary(S39.HTAS1.C$LOG10.qvalue)
   hist(S39.HTAS1.C$qvalue, border="black", col="lightblue",
        xlim=c(0,20), breaks=100)
@@ -128,7 +128,7 @@
        xlim=c(0,6), breaks=10)
   
   
-## making gr range object for auto
+### making gr range object for auto
   S39.HTAS1.C <- with(S39.HTAS1.C, 
                     GRanges(chr,
                             IRanges(start,end),
@@ -192,7 +192,7 @@
   
 
  
-## make a list called "peak, using two gr range objects defined above 
+### make a list called "peak, using two gr range objects defined above 
 
   peak1 <-list(S39.HTAS1.C, S39.HTZ1)
   peak2 <-list(S39.HTAS1.C, S41.HTAS1.C, S41.HTAS1.N)
@@ -201,8 +201,7 @@
   peak5 <- list(All_HTAS1, All_HTZ1)
   
   
-## profile ChIP peaks biding to TSS regions
-  # UCSC ref Gene; also there is a choice for UCSC.ce11.ensGene
+### profile ChIP peaks biding to TSS region. UCSC ref Gene; also there is a choice for UCSC.ce11.ensGene
   
   #txdb <- TxDb.Celegans.UCSC.ce11.refGene
   txdb <- TxDb.Celegans.UCSC.ce11.ensGene
@@ -215,7 +214,7 @@
   promoter <- getPromoters(TxDb = txdb, upstream=3000, downstream = 3000)
   
   
-##  Average Profile of ChIP peaks binding to TSS region
+###  Average Profile of ChIP peaks binding to TSS region
 
  p1 <- plotAvgProf2(peak1, TxDb=txdb, upstream=3000, downstream=3000,
                xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency", conf = 0.95,  resample = 1000)
@@ -250,9 +249,9 @@
   p5+scale_color_hue(labels = (c("HTAS-1","HTZ-1")))
   
 
-##   Average Profile of ChIP peaks binding to TSS and TTS region
+###   Average Profile of ChIP peaks binding to TSS and TTS region
 
-  # peak[[1]] for dup01, and peak[[2]] for auto 
+  ##### peak[[1]] for dup01, and peak[[2]] for auto 
   p1 <- plotPeakProf2(peak5, upstream = 3000, downstream = 3000,
                 by = "gene", type = "body", nbin = 100,
                 TxDb = txdb,ignore_strand = F)
@@ -269,10 +268,7 @@
   p2+scale_color_hue(labels = (c("HTAS-1.C", "HTAS-1.N", "HTZ-1")))
   
   
-## #### peak annotation ############
-
-# default: -3kb and +3kb TSS regions 
-# here I define tssRegions as -1000bp upstream and 300bp downstream
+###### peak annotation ############ here I define tssRegions as -1000bp upstream and 300bp downstream
 
   peakAnno.auto <- annotatePeak(All_HTZ1[], tssRegion=c(-3000, 3000), TxDb=txdb, annoDb="org.Ce.eg.db")
 
@@ -288,7 +284,7 @@
   vennpie(peakAnno.auto, r=0.2, cex=0.8) #or peakAnno.auto
   
   
- ## UPSET PLOT
+ ##### UPSET PLOT
  
   library(UpSetR)
   library(ggupset)
@@ -317,7 +313,7 @@
    
   plotDistToTSS(peakAnno.auto)
   
-## #### LIST ######
+###### LIST ######
 
   
   
@@ -332,7 +328,7 @@
 
   
   
- ##  #### START HERE: comparison of annotated genes #####
+ ###### START HERE: comparison of annotated genes #####
   rm(list=ls()) #removes all objects
   setwd("~/Documents/wd/Chu/ChIPseq.revisit.May2021")
   dir()
@@ -360,7 +356,7 @@
     head(auto)
   
   
-  ## #remove duplicates based on geneId columns
+  ##### remove duplicates based on geneId columns
   #which one does R choose to keep? The first one that appears?
   auto.unique <-auto %>% distinct(geneId, .keep_all = TRUE)
   dup01.unique <-dup01 %>% distinct(geneId, .keep_all = TRUE)
@@ -368,7 +364,7 @@
   overlap <- auto.unique$geneId%in%dup01.unique$geneId
   sum(overlap)
   
-## venn
+##### venn
   library(grid)
   library(futile.logger)
   library(VennDiagram)
@@ -391,7 +387,7 @@
     cex = .6,
     cat.cex = 0.6)
     
-##  ########## START FROM HERE ##########################################
+############ START FROM HERE ##########################################
   
   rm(list=ls()) #removes all objects
   setwd("~/Documents/wd/Chu/ChIPseq.revisit.May2021")
@@ -432,7 +428,7 @@
   auto.only <-data$ChIP.Overlap=="auto.only"
   dup01.only <-data$ChIP.Overlap=="dup01.only"
   
-  # need to work on how to move the dots that 
+  ###########need to work on how to move the dots that ###########
   #for (i in volcano$X.log10.mes4.q) if(i >=3.5) volcano$X.log10.mes4.q <- "3.5"
   #volcano$X.log10.mes4.q[volcano$X.log10.mes4.q >= 3.5] <- 3.5
   
@@ -448,7 +444,7 @@
   points(temp[dup01.only,], col=densCols(temp[dup01.only,],colramp = colorRampPalette(c("green","green4"))), pch=20)
   
   
-  # MA plot 
+  ######## MA plot  #####
   y <-data$HTAS.log2FoldChange
   x<-data$HTAS.baseMean
   x<-log2(x+1)
